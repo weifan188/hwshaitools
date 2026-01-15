@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 行政智能助理 - 公文與計畫專用</title>
+    <style>
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f4f6f9; color: #333; line-height: 1.6; }
+        .container { max-width: 800px; margin: 30px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #34495e; }
+        select, input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        textarea { height: 120px; }
+        .btn { background-color: #3498db; color: white; border: none; padding: 12px 24px; font-size: 18px; border-radius: 6px; cursor: pointer; width: 100%; transition: background 0.3s; }
+        .btn:hover { background-color: #2980b9; }
+        .output-box { margin-top: 30px; background: #ecf0f1; padding: 20px; border-radius: 8px; position: relative; }
+        .copy-btn { position: absolute; top: 10px; right: 10px; background: #27ae60; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🚀 AI 行政智能助理</h2>
+    <p>請輸入您的需求，系統將自動生成專業的 AI 指令，請複製後貼上至 ChatGPT/Gemini。</p>
+
+    <div class="form-group">
+        <label>1. 任務類型</label>
+        <select id="taskType">
+            <option value="公文（函/簽）">撰寫公文（函/簽）</option>
+            <option value="計畫書草案">撰寫計畫書草案</option>
+            <option value="成果報告">撰寫成果報告</option>
+            <option value="會議記錄">整理會議記錄</option>
+            <option value="新聞稿/公告">撰寫新聞稿或內部公告</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>2. 發文/提案單位與對象</label>
+        <input type="text" id="audience" placeholder="例如：發給全校師生、發給教育部、致呈校長...">
+    </div>
+
+    <div class="form-group">
+        <label>3. 核心主旨 (或是想解決的問題)</label>
+        <input type="text" id="subject" placeholder="例如：辦理113年度行政效能提升研習、申請數位轉型補助...">
+    </div>
+
+    <div class="form-group">
+        <label>4. 關鍵內容/必要資訊 (條列式為佳)</label>
+        <textarea id="keyPoints" placeholder="例如：&#10;1. 時間：10月15日&#10;2. 地點：第一會議室&#10;3. 經費來源：教務處預算&#10;4. 預期效益：提升同仁AI素養"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>5. 語氣與風格</label>
+        <select id="tone">
+            <option value="正式嚴謹（標準公文）">正式嚴謹（標準公文）</option>
+            <option value="專業且具說服力（計畫爭取）">專業且具說服力（計畫爭取）</option>
+            <option value="溫暖且堅定（成果展現）">溫暖且堅定（成果展現）</option>
+            <option value="簡潔明瞭（內部公告）">簡潔明瞭（內部公告）</option>
+        </select>
+    </div>
+
+    <button class="btn" onclick="generatePrompt()">生成 AI 指令 ✨</button>
+
+    <div class="output-box" id="outputArea" style="display:none;">
+        <button class="copy-btn" onclick="copyText()">複製指令</button>
+        <label>您的專屬 AI 指令：</label>
+        <p id="promptResult" style="white-space: pre-wrap;"></p>
+    </div>
+</div>
+
+<script>
+    function generatePrompt() {
+        const task = document.getElementById('taskType').value;
+        const audience = document.getElementById('audience').value;
+        const subject = document.getElementById('subject').value;
+        const points = document.getElementById('keyPoints').value;
+        const tone = document.getElementById('tone').value;
+
+        // 這裡就是「核心靈魂」：結構化提示詞模板
+        const promptText = `
+# Role: 資深行政專家與文書處理顧問
+
+# Task: 請協助我進行「${task}」的撰寫工作。
+
+# Context:
+- 發文/提案對象：${audience}
+- 核心主旨：${subject}
+- 語氣風格：${tone}
+
+# Key Information (必要包含的資訊):
+${points}
+
+# Requirements:
+1. 請採用台灣公務機關或企業標準的格式（如：主旨、說明、擬辦）。
+2. 用詞需精準、專業，符合行政倫理。
+3. 若是計畫書，請包含「計畫緣起」、「執行策略」與「預期效益」。
+4. 若是公文，請分段敘述，邏輯清晰。
+5. 請直接輸出完整的草稿內容，不需過多解釋。
+
+請開始撰寫：
+        `.trim();
+
+        document.getElementById('promptResult').innerText = promptText;
+        document.getElementById('outputArea').style.display = 'block';
+    }
+
+    function copyText() {
+        const text = document.getElementById('promptResult').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert("指令已複製！請貼上至 ChatGPT/Gemini 使用。");
+        });
+    }
+</script>
+
+</body>
+</html>
