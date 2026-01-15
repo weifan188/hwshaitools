@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 行政智能助理 V2.0 - 智慧升級版</title>
+    <title>AI 行政智能助理 V2.1 - 穩定版</title>
     <style>
         body { font-family: "Microsoft JhengHei", "Segoe UI", sans-serif; background-color: #f0f2f5; color: #333; line-height: 1.6; margin: 0; padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
@@ -29,14 +29,12 @@
         .copy-btn:hover { background: #38a169; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .helper-text { font-size: 0.9em; color: #718096; margin-top: 4px; display: block; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>🚀 AI 行政智能助理 <span class="badge">V2.0 智慧升級版</span></h2>
+    <h2>🚀 AI 行政智能助理 <span class="badge">V2.1 穩定版</span></h2>
     <p style="color: #4a5568;">選擇任務類型後，系統將自動切換所需的輸入欄位，協助您生成最精準的 AI 指令。</p>
 
     <label class="section-title">1. 您今天要處理什麼任務？</label>
@@ -121,16 +119,23 @@
 </div>
 
 <script>
+    console.log("AI Tool Script Loaded Successfully!"); // 檢查點
+
     function toggleFields() {
         // 隱藏所有動態區塊
         document.querySelectorAll('.dynamic-section').forEach(el => el.classList.remove('active'));
         
         // 根據選擇顯示對應區塊
         const task = document.getElementById('taskType').value;
-        document.getElementById('section-' + task).classList.add('active');
+        const target = document.getElementById('section-' + task);
+        if (target) {
+            target.classList.add('active');
+        }
     }
 
     function generatePrompt() {
+        console.log("Button Clicked!"); // 檢查點
+
         const taskType = document.getElementById('taskType').value;
         const audience = document.getElementById('audience').value;
         const subject = document.getElementById('subject').value;
@@ -182,7 +187,8 @@ ${specificReqs}
 - 請直接輸出完整草稿，無需過多開場白。
 
 請開始撰寫：
-        `.trim
+        `.trim();
+
         document.getElementById('promptResult').innerText = promptText;
         document.getElementById('outputArea').style.display = 'block';
         
