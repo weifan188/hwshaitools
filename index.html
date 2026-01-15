@@ -3,115 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 行政智能助理 - 公文與計畫專用</title>
+    <title>AI 行政智能助理 V2.0 - 智慧升級版</title>
     <style>
-        body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f4f6f9; color: #333; line-height: 1.6; }
-        .container { max-width: 800px; margin: 30px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #34495e; }
-        select, input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
-        textarea { height: 120px; }
-        .btn { background-color: #3498db; color: white; border: none; padding: 12px 24px; font-size: 18px; border-radius: 6px; cursor: pointer; width: 100%; transition: background 0.3s; }
-        .btn:hover { background-color: #2980b9; }
-        .output-box { margin-top: 30px; background: #ecf0f1; padding: 20px; border-radius: 8px; position: relative; }
-        .copy-btn { position: absolute; top: 10px; right: 10px; background: #27ae60; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; }
+        body { font-family: "Microsoft JhengHei", "Segoe UI", sans-serif; background-color: #f0f2f5; color: #333; line-height: 1.6; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+        h2 { color: #1a365d; border-bottom: 3px solid #3182ce; padding-bottom: 15px; margin-top: 0; display: flex; align-items: center; gap: 10px; }
+        .badge { background: #3182ce; color: white; font-size: 0.6em; padding: 4px 8px; border-radius: 4px; vertical-align: middle; }
+        
+        .section-title { font-size: 1.1em; font-weight: bold; color: #2d3748; margin-top: 25px; margin-bottom: 10px; display: block; border-left: 4px solid #3182ce; padding-left: 10px; }
+        
+        select, input, textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 16px; box-sizing: border-box; transition: border 0.3s; background-color: #fff; }
+        select:focus, input:focus, textarea:focus { border-color: #3182ce; outline: none; box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1); }
+        textarea { height: 100px; resize: vertical; }
+
+        /* 動態欄位區域樣式 */
+        .dynamic-section { display: none; background-color: #f7fafc; padding: 20px; border-radius: 10px; border: 1px dashed #cbd5e0; margin-top: 15px; }
+        .dynamic-section.active { display: block; animation: fadeIn 0.5s; }
+        
+        .btn { background-color: #3182ce; color: white; border: none; padding: 15px 30px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 30px; transition: transform 0.1s, background 0.3s; box-shadow: 0 4px 6px rgba(49, 130, 206, 0.3); }
+        .btn:hover { background-color: #2c5282; transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
+
+        .output-box { margin-top: 40px; background: #2d3748; color: #e2e8f0; padding: 25px; border-radius: 12px; position: relative; display: none; }
+        .copy-btn { position: absolute; top: 15px; right: 15px; background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
+        .copy-btn:hover { background: #38a169; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .helper-text { font-size: 0.9em; color: #718096; margin-top: 4px; display: block; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>🚀 AI 行政智能助理</h2>
-    <p>請輸入您的需求，系統將自動生成專業的 AI 指令，請複製後貼上至 ChatGPT/Gemini。</p>
+    <h2>🚀 AI 行政智能助理 <span class="badge">V2.0 智慧升級版</span></h2>
+    <p style="color: #4a5568;">選擇任務類型後，系統將自動切換所需的輸入欄位，協助您生成最精準的 AI 指令。</p>
 
-    <div class="form-group">
-        <label>1. 任務類型</label>
-        <select id="taskType">
-            <option value="公文（函/簽）">撰寫公文（函/簽）</option>
-            <option value="計畫書草案">撰寫計畫書草案</option>
-            <option value="成果報告">撰寫成果報告</option>
-            <option value="會議記錄">整理會議記錄</option>
-            <option value="新聞稿/公告">撰寫新聞稿或內部公告</option>
-        </select>
+    <label class="section-title">1. 您今天要處理什麼任務？</label>
+    <select id="taskType" onchange="toggleFields()">
+        <option value="common">一般公文 / 通知 / 信件</option>
+        <option value="proposal">撰寫計畫書 / 提案</option>
+        <option value="report">撰寫成果報告 / 結案</option>
+    </select>
+
+    <div id="baseInfo">
+        <label class="section-title">2. 基本資訊</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div>
+                <label style="font-weight:bold; display:block; margin-bottom:5px;">發文對象/單位</label>
+                <input type="text" id="audience" placeholder="例：全校師生、教育部、總經理...">
+            </div>
+            <div>
+                <label style="font-weight:bold; display:block; margin-bottom:5px;">語氣風格</label>
+                <select id="tone">
+                    <option value="正式嚴謹">正式嚴謹 (標準公文)</option>
+                    <option value="積極具說服力">積極具說服力 (爭取資源)</option>
+                    <option value="溫暖且肯定">溫暖且肯定 (呈現成果)</option>
+                    <option value="簡潔明瞭">簡潔明瞭 (快速通知)</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-top: 15px;">
+            <label style="font-weight:bold; display:block; margin-bottom:5px;">核心主旨 (Title)</label>
+            <input type="text" id="subject" placeholder="例：辦理113年度數位轉型工作坊計畫">
+        </div>
     </div>
 
-    <div class="form-group">
-        <label>2. 發文/提案單位與對象</label>
-        <input type="text" id="audience" placeholder="例如：發給全校師生、發給教育部、致呈校長...">
+    <div id="section-common" class="dynamic-section active">
+        <label class="section-title">📝 關鍵內容 (條列式)</label>
+        <textarea id="common-points" placeholder="請列出時間、地點、重要事項..."></textarea>
     </div>
 
-    <div class="form-group">
-        <label>3. 核心主旨 (或是想解決的問題)</label>
-        <input type="text" id="subject" placeholder="例如：辦理113年度行政效能提升研習、申請數位轉型補助...">
+    <div id="section-proposal" class="dynamic-section">
+        <label class="section-title">💡 撰寫計畫書專用欄位</label>
+        
+        <label style="font-weight:bold;">計畫緣起/背景 (Why)</label>
+        <textarea id="prop-origin" placeholder="為什麼要做這個計畫？現況痛點是什麼？" style="height:80px;"></textarea>
+        
+        <label style="font-weight:bold; margin-top:10px; display:block;">執行策略與內容 (How)</label>
+        <textarea id="prop-content" placeholder="預計做哪些具體項目？活動內容？" style="height:80px;"></textarea>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top:10px;">
+            <div>
+                <label style="font-weight:bold;">預計執行期程</label>
+                <input type="text" id="prop-time" placeholder="例：113年9月至12月">
+            </div>
+            <div>
+                <label style="font-weight:bold;">預估經費預算</label>
+                <input type="text" id="prop-budget" placeholder="例：約10萬元 (包含講師費、膳費)">
+            </div>
+        </div>
+        
+        <label style="font-weight:bold; margin-top:10px; display:block;">預期效益 (KPI)</label>
+        <input type="text" id="prop-kpi" placeholder="例：預計培訓50人、滿意度達85%以上">
     </div>
 
-    <div class="form-group">
-        <label>4. 關鍵內容/必要資訊 (條列式為佳)</label>
-        <textarea id="keyPoints" placeholder="例如：&#10;1. 時間：10月15日&#10;2. 地點：第一會議室&#10;3. 經費來源：教務處預算&#10;4. 預期效益：提升同仁AI素養"></textarea>
+    <div id="section-report" class="dynamic-section">
+        <label class="section-title">📊 撰寫成果報告專用欄位</label>
+        
+        <label style="font-weight:bold;">活動/專案亮點摘要</label>
+        <textarea id="rep-highlight" placeholder="這次做得最好的地方是什麼？" style="height:60px;"></textarea>
+        
+        <label style="font-weight:bold; margin-top:10px; display:block;">量化數據 (Data)</label>
+        <input type="text" id="rep-data" placeholder="例：參與人數120人、達成率120%、節省成本5%...">
+        
+        <label style="font-weight:bold; margin-top:10px; display:block;">困難與突破 (或是檢討與改進)</label>
+        <textarea id="rep-issues" placeholder="過程中遇到什麼困難？如何解決？未來如何改進？" style="height:80px;"></textarea>
     </div>
 
-    <div class="form-group">
-        <label>5. 語氣與風格</label>
-        <select id="tone">
-            <option value="正式嚴謹（標準公文）">正式嚴謹（標準公文）</option>
-            <option value="專業且具說服力（計畫爭取）">專業且具說服力（計畫爭取）</option>
-            <option value="溫暖且堅定（成果展現）">溫暖且堅定（成果展現）</option>
-            <option value="簡潔明瞭（內部公告）">簡潔明瞭（內部公告）</option>
-        </select>
-    </div>
+    <button class="btn" onclick="generatePrompt()">✨ 生成 AI 超級指令</button>
 
-    <button class="btn" onclick="generatePrompt()">生成 AI 指令 ✨</button>
-
-    <div class="output-box" id="outputArea" style="display:none;">
+    <div class="output-box" id="outputArea">
         <button class="copy-btn" onclick="copyText()">複製指令</button>
-        <label>您的專屬 AI 指令：</label>
-        <p id="promptResult" style="white-space: pre-wrap;"></p>
+        <h3 style="margin-top:0; color:#63b3ed;">👇 請複製下方指令至 ChatGPT/Gemini</h3>
+        <p id="promptResult" style="white-space: pre-wrap; font-family: monospace; font-size: 15px;"></p>
     </div>
 </div>
 
 <script>
-    function generatePrompt() {
+    function toggleFields() {
+        // 隱藏所有動態區塊
+        document.querySelectorAll('.dynamic-section').forEach(el => el.classList.remove('active'));
+        
+        // 根據選擇顯示對應區塊
         const task = document.getElementById('taskType').value;
+        document.getElementById('section-' + task).classList.add('active');
+    }
+
+    function generatePrompt() {
+        const taskType = document.getElementById('taskType').value;
         const audience = document.getElementById('audience').value;
         const subject = document.getElementById('subject').value;
-        const points = document.getElementById('keyPoints').value;
         const tone = document.getElementById('tone').value;
+        
+        let details = "";
+        let specificReqs = "";
 
-        // 這裡就是「核心靈魂」：結構化提示詞模板
+        // 根據不同模式組合內容
+        if (taskType === 'common') {
+            const points = document.getElementById('common-points').value;
+            details = `關鍵資訊：\n${points}`;
+            specificReqs = "請確保邏輯通順，用詞精準，符合一般公文或信件格式。";
+        } 
+        else if (taskType === 'proposal') {
+            const origin = document.getElementById('prop-origin').value;
+            const content = document.getElementById('prop-content').value;
+            const time = document.getElementById('prop-time').value;
+            const budget = document.getElementById('prop-budget').value;
+            const kpi = document.getElementById('prop-kpi').value;
+            
+            details = `計畫背景：${origin}\n執行內容：${content}\n執行期程：${time}\n經費預算：${budget}\n預期效益：${kpi}`;
+            specificReqs = "1. 請使用清楚的「標題」分段。\n2. 「執行期程」與「經費預算」請務必製作成「表格(Table)」呈現。\n3. 內容需具備說服力，強調效益與可行性。";
+        } 
+        else if (taskType === 'report') {
+            const highlight = document.getElementById('rep-highlight').value;
+            const data = document.getElementById('rep-data').value;
+            const issues = document.getElementById('rep-issues').value;
+            
+            details = `亮點摘要：${highlight}\n量化數據：${data}\n檢討與建議：${issues}`;
+            specificReqs = "1. 請將量化數據整理成列點或表格，使其一目了然。\n2. 結論部分請給予正向的未來展望。\n3. 語氣需展現專業度與成果價值。";
+        }
+
+        // 組合最終 Prompt
         const promptText = `
-# Role: 資深行政專家與文書處理顧問
+# Role: 資深行政專家與專案顧問
 
-# Task: 請協助我進行「${task}」的撰寫工作。
+# Task: 請協助我撰寫一份「${subject}」。
 
 # Context:
-- 發文/提案對象：${audience}
-- 核心主旨：${subject}
+- 接收對象：${audience}
 - 語氣風格：${tone}
 
-# Key Information (必要包含的資訊):
-${points}
+# Input Data (輸入資訊):
+${details}
 
-# Requirements:
-1. 請採用台灣公務機關或企業標準的格式（如：主旨、說明、擬辦）。
-2. 用詞需精準、專業，符合行政倫理。
-3. 若是計畫書，請包含「計畫緣起」、「執行策略」與「預期效益」。
-4. 若是公文，請分段敘述，邏輯清晰。
-5. 請直接輸出完整的草稿內容，不需過多解釋。
+# Requirements (寫作要求):
+${specificReqs}
+- 請直接輸出完整草稿，無需過多開場白。
 
 請開始撰寫：
-        `.trim();
-
-        document.getElementById('promptResult').innerText = promptText;
-        document.getElementById('outputArea').style.display = 'block';
-    }
-
-    function copyText() {
-        const text = document.getElementById('promptResult').innerText;
-        navigator.clipboard.writeText(text).then(() => {
-            alert("指令已複製！請貼上至 ChatGPT/Gemini 使用。");
-        });
-    }
-</script>
-
-</body>
-</html>
+        `.trim
