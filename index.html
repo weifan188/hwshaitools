@@ -183,3 +183,20 @@ ${specificReqs}
 
 請開始撰寫：
         `.trim
+        document.getElementById('promptResult').innerText = promptText;
+        document.getElementById('outputArea').style.display = 'block';
+        
+        // 自動捲動到結果區
+        document.getElementById('outputArea').scrollIntoView({behavior: "smooth"});
+    }
+
+    function copyText() {
+        const text = document.getElementById('promptResult').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert("指令已複製！準備起飛 🚀");
+        });
+    }
+</script>
+
+</body>
+</html>
